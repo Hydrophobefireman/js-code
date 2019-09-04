@@ -1,0 +1,14 @@
+{
+  "name": "js-code",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "build": "microbundle ./index.js -f es,umd --compress false -o @build"
+  },
+  "devDependencies": {
+    "microbundle": "^0.11.0"
+  }
+}
