@@ -1,10 +1,11 @@
 {
-  "name": "js-code",
-  "version": "1.0.0",
+  "name": "@hydrophobefireman/j-utils",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "author": "",
   "license": "ISC",
+  "module":"index.js",
   "scripts": {
     "build": "microbundle ./index.js -f es,umd --compress false -o @build"
   },
