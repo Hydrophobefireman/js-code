@@ -10,8 +10,8 @@ function generateSet(it) {
     this.add(k);
   }
 }
-export default function compatSet(iterable) {
-  if (HAS_SET) return new Set(iterable);
+export default function compatSet(iterable,forceUseCustomImplementation) {
+  if (!forceUseCustomImplementation && HAS_SET) return new Set(iterable);
   this[s] = [];
   generateSet.call(this, iterable);
 }

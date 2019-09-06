@@ -1,5 +1,5 @@
 import assign from "../Object/assign.js";
-export default function CSSStringToObj() {
+export default function CSSStringToObj(css) {
   if ("object" == typeof css) return css;
   const rules = css.split(";");
   return rules.reduce((acc, d) => {

@@ -11,8 +11,8 @@ function generateMap  (it) {
         this.set(k[0], k[1]);
     }
 };
-export default function compatMap(iterable) {
-  if (HAS_MAP) return new Map(iterable);
+export default function compatMap(iterable,forceUseCustomImplementation) {
+  if (!forceUseCustomImplementation&&HAS_MAP) return new Map(iterable);
   this[m] = [];
   generateMap.call(this,iterable);
 }
