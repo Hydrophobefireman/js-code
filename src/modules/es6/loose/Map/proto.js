@@ -1,6 +1,5 @@
-import { m } from "../constants";
+import { m ,_EqCheck as is , normalizeNegativeZero } from "../constants";
 import symbolProps from "./_Symbol.js";
-import is from "../../../Object/is.js";
 import assign from "../../../Object/assign.js";
 function __i_getMapArr(k) {
   for (const i of this[m]) {
@@ -14,7 +13,7 @@ export default function setPrototypeProps(compatMap) {
     if (prevArr) {
       prevArr[1] = v;
     } else {
-      this[m].push([k, v]);
+      this[m].push([normalizeNegativeZero(k), v]);
     }
     return this;
   };

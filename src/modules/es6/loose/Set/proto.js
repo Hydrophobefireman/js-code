@@ -1,11 +1,10 @@
-import { s } from "../constants";
+import { s ,_EqCheck as is,normalizeNegativeZero } from "../constants";
 import symbolProps from "./_Symbol.js";
-import is from "../../../Object/is.js";
 import assign from "../../../Object/assign.js";
 
 export default function setPrototypeProps(compatSet) {
   compatSet.prototype.add = function set(k) {
-    if (!this.has(k)) this[s].push(k);
+    if (!this.has(k)) this[s].push(normalizeNegativeZero(k));
     return this;
   };
   compatSet.prototype.has = function has(key) {
