@@ -1,5 +1,8 @@
+/**
+ * @returns {globalThis}
+ */
 export function patchGlobalThis() {
-  if (typeof globalThis === "object") return;
+  if (typeof globalThis === "object") return globalThis;
   Object.defineProperty(Object.prototype, "___this", {
     get: function() {
       return this;
@@ -7,16 +10,32 @@ export function patchGlobalThis() {
     configurable: true
   });
   ___this.globalThis = ___this;
+  const r = ___this;
   delete Object.prototype.___this;
+  return r;
 }
-patchGlobalThis()
-const _Sym=globalThis.Symbol||{}
-export const has = (a,b)=>a in b
+patchGlobalThis();
+const _Sym = globalThis.Symbol || {};
+
+/**
+ *
+ * @param {string|number|symbol} a
+ * @param {object} b
+ * @returns {boolean}
+ */
+export const has = (a, b) => a in b;
+
 export const emptyObj = {};
 export const emptyArr = [];
-export const isIterable=k=>k&&!!k[_Sym.iterator]
+
+/**
+ *
+ * @param {any} k
+ */
+export const isIterable = k => k && !!k[_Sym.iterator];
 export const _Object = emptyObj.constructor;
 export const hasOwnProp = emptyObj.hasOwnProperty;
+
 export function _generateDocFrag(args) {
   const frag = document.createDocumentFragment();
   args.forEach(arg =>
@@ -46,6 +65,7 @@ export const isBrowser =
   ((window.navigator && !!window.navigator.userAgent) ||
     (window.document && !!document.createElement));
 
-export const defer = typeof Promise == "function"
+export const defer =
+  typeof Promise == "function"
     ? Promise.prototype.then.bind(Promise.resolve())
     : setTimeout;

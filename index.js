@@ -1,7 +1,12 @@
 import base64ToArrayBuffer from "./src/modules/base64ToArrayBuffer/index.js";
 import objToCSSString from "./src/modules/objToCSSString/index.js";
 import CSSStringToObj from "./src/modules/CSSStringToObj/index.js";
-import { compatMap, compatSet } from "./src/modules/es6/loose/index.js";
+import {
+  FakeMap,
+  FakeSet,
+  FakeWeakMap,
+  FakeWeakSet
+} from "./src/modules/es6/loose/index.js";
 import {
   Object_keys,
   Object_values,
@@ -21,6 +26,7 @@ import retry from "./src/modules/retry/index.js";
 import urlencode from "./src/modules/urlencode/index.js";
 import loadCSS from "./src/modules/loadCSS/index.js";
 const obj = {
+  arrayBufferToBase64,
   base64ToArrayBuffer,
   objToCSSString,
   Object_is,
@@ -37,8 +43,9 @@ const obj = {
   loadCSS,
   retry,
   nextEvent,
-  compatMap,
-  compatSet
-};
+  compatMap: FakeMap,
+  compatSet: FakeSet,
+  compatWeakMap: FakeWeakMap,
+  compatWeakSet: FakeWeakSet};
 
 export default obj;

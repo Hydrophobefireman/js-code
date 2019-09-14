@@ -1,15 +1,33 @@
 {
   "name": "@hydrophobefireman/j-utils",
   "version": "1.0.4",
-  "description": "",
+  "description": "Javascript utility functions and shims",
   "main": "index.js",
-  "author": "",
+  "author": "Hydrophobefireman",
   "license": "ISC",
-  "module":"index.js",
+  "module": "index-module.js",
   "scripts": {
-    "build": "microbundle ./index.js -f es,umd --compress false -o @build"
+    "build": "microbundle ./index.js -f modern,umd --compress false -o @build"
   },
   "devDependencies": {
-    "microbundle": "^0.11.0"
-  }
+    "microbundle": "^0.12.0-next.6"
+  },
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hydrophobefireman/js-code.git"
+  },
+  "keywords": [
+    "javascript",
+    "polyfill",
+    "shim",
+    "Maps",
+    "Sets",
+    "Weak",
+    "es6"
+  ],
+  "bugs": {
+    "url": "https://github.com/Hydrophobefireman/js-code/issues"
+  },
+  "homepage": "https://github.com/Hydrophobefireman/js-code#readme"
 }
