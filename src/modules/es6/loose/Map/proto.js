@@ -1,4 +1,4 @@
-import { m, _EqCheck as is, normalizeNegativeZero } from "../constants";
+import { m, _EqCheck as is, normalizeNegativeZero } from "../constants.js";
 import symbolProps from "./_Symbol.js";
 import assign from "../../../Object/assign.js";
 function __i_getMapArr(k) {

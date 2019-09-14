@@ -1,4 +1,4 @@
-import { has, patchGlobalThis } from "../../util";
+import { has, patchGlobalThis } from "../../util.js";
 const gl = patchGlobalThis();
 export function _getCryptoOrMathRandom() {
   const hasCrypto = has("crypto", gl);

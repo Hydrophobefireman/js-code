@@ -1,4 +1,4 @@
-import { s, _EqCheck as is, normalizeNegativeZero } from "../constants";
+import { s, _EqCheck as is, normalizeNegativeZero } from "../constants.js";
 import symbolProps from "./_Symbol.js";
 import assign from "../../../Object/assign.js";
 

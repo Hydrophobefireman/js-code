@@ -516,6 +516,7 @@
     this.__map = new FakeWeakMap(null, forceUseCustomImplementations);
     generateSet$1.call(this, iterable);
   }
+  var a = new FakeWeakSet();
   FakeWeakSet.prototype = {
     add(k) {
       if (this.__map.has(k)) return;
