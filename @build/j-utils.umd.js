@@ -22,6 +22,7 @@
 
   var has = (a, b) => a in b;
   var emptyObj = {};
+  var emptyArr$1 = [];
   var isIterable$1 = k => k && !!k[_Sym.iterator];
   var _Object = emptyObj.constructor;
   var hasOwnProp = emptyObj.hasOwnProperty;
@@ -30,8 +31,39 @@
     args.forEach(arg => frag.appendChild(arg instanceof Node ? arg : document.createTextNode(String(arg))));
     return frag;
   }
+  function checkAndPatch(o, prop, opt) {
+    if (prop in o) {
+      var val = o[prop];
+      var patch = opt.patch,
+          name = opt.name;
+
+      if (opt.bind) {
+        patch[name] = val.bind(opt.bind);
+      } else {
+        patch[name] = val;
+      }
+
+      return true;
+    }
+
+    return false;
+  }
   var isBrowser = typeof window !== "undefined" && (window.navigator && !!window.navigator.userAgent || window.document && !!document.createElement);
   var defer = typeof Promise == "function" ? Promise.prototype.then.bind(Promise.resolve()) : setTimeout;
+
+  var util = ({
+    patchGlobalThis: patchGlobalThis,
+    has: has,
+    emptyObj: emptyObj,
+    emptyArr: emptyArr$1,
+    isIterable: isIterable$1,
+    _Object: _Object,
+    hasOwnProp: hasOwnProp,
+    _generateDocFrag: _generateDocFrag,
+    checkAndPatch: checkAndPatch,
+    isBrowser: isBrowser,
+    defer: defer
+  });
 
   var browserOnlyWarning = {
     warn(msg) {
@@ -51,7 +83,7 @@
     return await data.arrayBuffer();
   }
 
-  var Object_keys = "keys" in _Object ? _Object.keys : function Object_keys(a) {
+  var keys = "keys" in _Object ? _Object.keys : function Object_keys(a) {
     var arr = [];
 
     for (var i in a) {
@@ -65,14 +97,14 @@
     if ("string" == typeof a) return a;
     var b = [];
 
-    for (var c of Object_keys(a)) {
+    for (var c of keys(a)) {
       b.push(c + ":" + a[c]);
     }
 
     return b.join(";");
   }
 
-  var Object_assign = "assign" in _Object ? _Object.assign : function Object_assign(target) {
+  var assign = "assign" in _Object ? _Object.assign : function Object_assign(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
 
@@ -92,8 +124,86 @@
     return rules.reduce((acc, d) => {
       var ruleAndValue = d.split(":"),
           fObj = {};
-      return 1 < ruleAndValue.length ? (fObj[ruleAndValue[0].trim()] = ruleAndValue[1].trim(), Object_assign(acc, filaObj)) : acc;
+      return 1 < ruleAndValue.length ? (fObj[ruleAndValue[0].trim()] = ruleAndValue[1].trim(), assign(acc, filaObj)) : acc;
     }, {});
+  }
+
+  function nextEvent(obj, event) {
+    return new Promise(res => obj.addEventListener(event, res, {
+      once: true
+    }));
+  }
+
+  function arrayBufferToBase64(buffer) {
+    browserOnlyWarning._throw();
+
+    return new Promise((resolve, _) => {
+      var blob = new Blob([buffer], {
+        type: "application/octet-binary"
+      });
+      var reader = new FileReader();
+
+      reader.onload = evt => {
+        var dataurl = evt.target.result;
+        resolve(dataurl.substr(dataurl.indexOf(",") + 1));
+      };
+
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  function retry(fn, max, bind) {
+    max = max || 3;
+    return async function () {
+      var tries = 0;
+
+      while (tries < max) {
+        try {
+          return await fn.apply(bind, arguments);
+        } catch (e) {
+          tries++;
+        }
+      }
+
+      throw new Error("function " + (fn.name || "") + " failed " + max + " times");
+    };
+  }
+
+  patchGlobalThis();
+  function urlencode(a) {
+    if (globalThis.URLSearchParams) {
+      return new URLSearchParams(a).toString();
+    } else {
+      return "" + obj.keys(a).map(b => encodeURIComponent(b) + "=" + encodeURIComponent(a[b])).join("&");
+    }
+  }
+
+  function Element_append(element) {
+    browserOnlyWarning._throw();
+
+    var args = emptyArr.slice.call(arguments, 1);
+
+    if ("append" in element) {
+      element.append.apply(element, args);
+    }
+
+    var frag = _generateDocFrag(args);
+
+    element.appendChild(frag);
+  }
+
+  function loadCSS(url) {
+    browserOnlyWarning._throw();
+
+    var link = assign(document.createElement("link"), {
+      rel: "stylesheet",
+      href: url
+    });
+    return new Promise((res, rej) => {
+      link.addEventListener("load", () => res());
+      link.addEventListener("error", () => rej());
+      Element_append(document.head, link);
+    });
   }
 
   var _global = patchGlobalThis();
@@ -109,7 +219,7 @@
   var _EqCheck = (x, y) => x === y || _isNaN(x) && _isNaN(y);
   var normalizeNegativeZero = k => k === 0 ? 0 : k;
 
-  var entries, values, keys;
+  var entries, values, keys$1;
 
   if (typeof Symbol !== "undefined") {
     function mapEntriesIterator(map) {
@@ -152,17 +262,17 @@
       return mapKeyValIterator(this, false);
     };
 
-    keys = function keys() {
+    keys$1 = function keys() {
       return mapKeyValIterator(this, true);
     };
   } else {
-    entries = keys = values = function values() {
+    entries = keys$1 = values = function values() {
       console.warn("no symbol support");
     };
   }
 
   var symbolProps = {
-    keys,
+    keys: keys$1,
     values,
     entries
   };
@@ -228,7 +338,7 @@
       FakeMap.prototype[Symbol.toStringTag] = "Map";
     }
 
-    Object_assign(FakeMap.prototype, symbolProps);
+    assign(FakeMap.prototype, symbolProps);
   }
 
   function _instanceof(left, right) {
@@ -265,7 +375,7 @@
   }
   setPrototypeProps(FakeMap);
 
-  var entries$1, values$1, keys$1;
+  var entries$1, values$1, keys$2;
 
   if (typeof Symbol !== "undefined") {
 
@@ -303,17 +413,17 @@
       return setKeyValIterator(this, false);
     };
 
-    keys$1 = function keys() {
+    keys$2 = function keys() {
       return setKeyValIterator(this, false);
     };
   } else {
-    entries$1 = keys$1 = values$1 = function values() {
+    entries$1 = keys$2 = values$1 = function values() {
       console.warn("no symbol support");
     };
   }
 
   var symbolProps$1 = {
-    keys: keys$1,
+    keys: keys$2,
     values: values$1,
     entries: entries$1
   };
@@ -361,7 +471,7 @@
       FakeSet.prototype[Symbol.toStringTag] = "Set";
     }
 
-    Object_assign(FakeSet.prototype, symbolProps$1);
+    assign(FakeSet.prototype, symbolProps$1);
   }
 
   function generateSet(it) {
@@ -383,6 +493,7 @@
   }
   setPrototypeProps$1(FakeSet);
 
+  var e = {};
   var gl = patchGlobalThis();
   function _getCryptoOrMathRandom() {
     var hasCrypto = has("crypto", gl);
@@ -406,14 +517,18 @@
       enumerable: false
     });
   }
-  function patchObjectSealingMethods(key) {
+  function _patchObjectSealingMethods(key) {
     function _patch(m) {
       var method = Object[m];
+      if (method.__patched === e) return;
+      var fn;
 
-      Object[m] = function FakeMethod(obj) {
+      fn = Object[m] = function FakeMethod(obj) {
         initializeInternalKeyProp(obj, key);
         return method(obj);
       };
+
+      fn.__patched = e;
     }
 
     ["freeze", "seal", "preventExtensions"].forEach(_patch);
@@ -425,6 +540,8 @@
   }
 
   var __WEAK__KEY = "@@WeakMap__" + +new Date() + Math.random().toString(16) + "-" + _getCryptoOrMathRandom();
+
+  var patchObjectSealingMethods = _patchObjectSealingMethods.bind(void 0, __WEAK__KEY);
 
   function generateMap$1(it) {
     if (it == null) return;
@@ -442,7 +559,7 @@
 
     _classCallCheck(this, FakeWeakMap);
 
-    patchObjectSealingMethods(__WEAK__KEY);
+    patchObjectSealingMethods();
     this._id = ++weakMapIds;
     generateMap$1.call(this, iterable);
   }
@@ -516,7 +633,6 @@
     this.__map = new FakeWeakMap(null, forceUseCustomImplementations);
     generateSet$1.call(this, iterable);
   }
-  var a = new FakeWeakSet();
   FakeWeakSet.prototype = {
     add(k) {
       if (this.__map.has(k)) return;
@@ -536,7 +652,17 @@
 
   };
 
-  var Object_entries = "entries" in _Object ? _Object.entries : function Object_entries(a) {
+
+
+  var es6 = ({
+    FakeMap: FakeMap,
+    FakeSet: FakeSet,
+    FakeWeakMap: FakeWeakMap,
+    patchObjectSealingMethods: patchObjectSealingMethods,
+    FakeWeakSet: FakeWeakSet
+  });
+
+  var entries$2 = "entries" in _Object ? _Object.entries : function Object_entries(a) {
     var keys = keys(a);
     var kLen = keys.length;
     var ret = Array(kLen);
@@ -549,23 +675,23 @@
     return ret;
   };
 
-  var Object_values = "values" in _Object ? _Object.values : function Object_values(a) {
+  var values$2 = "values" in _Object ? _Object.values : function Object_values(a) {
     var arr = [];
 
-    for (var i of Object_keys(a)) {
+    for (var i of keys(a)) {
       arr.push(a[i]);
     }
 
     return arr;
   };
 
-  var Object_fromEntries = "fromEntries" in _Object ? _Object.fromEntries : function Object_fromEntries(entries) {
+  var fromEntries = "fromEntries" in _Object ? _Object.fromEntries : function Object_fromEntries(entries) {
     var ret = {};
     entries.forEach(k => ret[k[0]] = k[1]);
     return ret;
   };
 
-  var Object_is = "is" in _Object ? _Object.is : function is(x, y) {
+  var is = "is" in _Object ? _Object.is : function is(x, y) {
     if (x === y) {
       return x !== 0 || 1 / x === 1 / y;
     } else {
@@ -573,29 +699,16 @@
     }
   };
 
-  function nextEvent(obj, event) {
-    return new Promise(res => obj.addEventListener(event, res, {
-      once: true
-    }));
-  }
 
-  function arrayBufferToBase64(buffer) {
-    browserOnlyWarning._throw();
 
-    return new Promise((resolve, _) => {
-      var blob = new Blob([buffer], {
-        type: "application/octet-binary"
-      });
-      var reader = new FileReader();
-
-      reader.onload = evt => {
-        var dataurl = evt.target.result;
-        resolve(dataurl.substr(dataurl.indexOf(",") + 1));
-      };
-
-      reader.readAsDataURL(blob);
-    });
-  }
+  var _Object$1 = ({
+    Object_assign: assign,
+    Object_keys: keys,
+    Object_entries: entries$2,
+    Object_values: values$2,
+    Object_fromEntries: fromEntries,
+    Object_is: is
+  });
 
   function Element_after(element) {
     browserOnlyWarning._throw();
@@ -609,20 +722,6 @@
     var frag = _generateDocFrag(args);
 
     element.parentNode.insertBefore(frag, element.nextSibling);
-  }
-
-  function Element_append(element) {
-    browserOnlyWarning._throw();
-
-    var args = emptyArr.slice.call(arguments, 1);
-
-    if ("append" in element) {
-      element.append.apply(element, args);
-    }
-
-    var frag = _generateDocFrag(args);
-
-    element.appendChild(frag);
   }
 
   function Element_prepend(element) {
@@ -639,69 +738,27 @@
     element.insertBefore(frag, element.firstChild);
   }
 
-  function retry(fn, max, bind) {
-    max = max || 3;
-    return async function () {
-      var tries = 0;
 
-      while (tries < max) {
-        try {
-          return await fn.apply(bind, arguments);
-        } catch (e) {
-          tries++;
-        }
-      }
 
-      throw new Error("function " + (fn.name || "") + " failed " + max + " times");
-    };
-  }
-
-  patchGlobalThis();
-  function urlencode(a) {
-    if (globalThis.URLSearchParams) {
-      return new URLSearchParams(a).toString();
-    } else {
-      return "" + obj.keys(a).map(b => encodeURIComponent(b) + "=" + encodeURIComponent(a[b])).join("&");
-    }
-  }
-
-  function loadCSS(url) {
-    browserOnlyWarning._throw();
-
-    var link = Object_assign(document.createElement("link"), {
-      rel: "stylesheet",
-      href: url
-    });
-    return new Promise((res, rej) => {
-      link.addEventListener("load", () => res());
-      link.addEventListener("error", () => rej());
-      Element_append(document.head, link);
-    });
-  }
+  var Element = ({
+    Element_after: Element_after,
+    Element_append: Element_append,
+    Element_prepend: Element_prepend
+  });
 
   var obj$1 = {
     arrayBufferToBase64,
     base64ToArrayBuffer,
     objToCSSString,
-    Object_is,
     CSSStringToObj,
     urlencode,
-    Object_keys,
-    Object_values,
-    Object_entries,
-    Object_fromEntries,
-    Object_assign,
-    Element_append,
-    Element_prepend,
-    Element_after,
     loadCSS,
     retry,
     nextEvent,
-    compatMap: FakeMap,
-    compatSet: FakeSet,
-    compatWeakMap: FakeWeakMap,
-    compatWeakSet: FakeWeakSet
+    util
   };
+
+  assign(obj$1, _Object$1, Element, es6);
 
   return obj$1;
 

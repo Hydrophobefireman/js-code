@@ -1,11 +1,11 @@
 {
   "name": "@hydrophobefireman/j-utils",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Javascript utility functions and shims",
   "main": "index.js",
   "author": "Hydrophobefireman",
   "license": "ISC",
-  "module": "index-module.js",
+  "module": "./@build/index-module.js",
   "scripts": {
     "build": "microbundle ./index.js -f modern,umd --compress false -o @build"
   },

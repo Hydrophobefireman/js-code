@@ -3,16 +3,21 @@ import { isIterable } from "../../../util.js";
 import {
   _getCryptoOrMathRandom,
   initializeInternalKeyProp,
-  patchObjectSealingMethods,
+  _patchObjectSealingMethods,
   isObjectOrThrow
 } from "../Weak-shared.js";
 import { _classCallCheck } from "../../../../shared.js";
+
 const __WEAK__KEY =
   "@@WeakMap__" +
   +new Date() +
   Math.random().toString(16) +
   "-" +
   _getCryptoOrMathRandom();
+export const patchObjectSealingMethods = _patchObjectSealingMethods.bind(
+  void 0,
+  __WEAK__KEY
+);
 function generateMap(it) {
   if (it == null) return;
   if (!isIterable(it))
@@ -39,7 +44,7 @@ let weakMapIds = 0;
 export default function FakeWeakMap(iterable, forceUseCustomImplementation) {
   if (!forceUseCustomImplementation && HAS_WEAK) return new WeakMap(iterable);
   _classCallCheck(this, FakeWeakMap);
-  patchObjectSealingMethods(__WEAK__KEY);
+  patchObjectSealingMethods();
   this._id = ++weakMapIds;
   generateMap.call(this, iterable);
 }

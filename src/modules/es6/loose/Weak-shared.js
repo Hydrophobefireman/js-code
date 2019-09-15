@@ -1,4 +1,5 @@
 import { has, patchGlobalThis } from "../../util.js";
+const e = {};
 const gl = patchGlobalThis();
 export function _getCryptoOrMathRandom() {
   const hasCrypto = has("crypto", gl);
@@ -18,17 +19,20 @@ export function initializeInternalKeyProp(obj, key) {
   Object.defineProperty(obj, key, { value: {}, enumerable: false });
 }
 
-export function patchObjectSealingMethods(key) {
+export function _patchObjectSealingMethods(key) {
   /**
    *
    * @param {"seal"|"freeze"|"preventExtensions"} m
    */
   function _patch(m) {
     const method = Object[m];
-    Object[m] = function FakeMethod(obj) {
+    if (method.__patched === e) return;
+    let fn;
+    fn = Object[m] = function FakeMethod(obj) {
       initializeInternalKeyProp(obj, key);
       return method(obj);
     };
+    fn.__patched = e;
   }
   ["freeze", "seal", "preventExtensions"].forEach(_patch);
 }

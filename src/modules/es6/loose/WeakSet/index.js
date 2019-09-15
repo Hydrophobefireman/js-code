@@ -23,8 +23,6 @@ export default function FakeWeakSet(iterable, forceUseCustomImplementations) {
   this.__map = new _WeakMap(null, forceUseCustomImplementations);
   generateSet.call(this, iterable);
 }
-const a=new FakeWeakSet()
-a
 FakeWeakSet.prototype = {
   add(k) {
     if (this.__map.has(k)) return;
