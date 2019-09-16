@@ -23,18 +23,14 @@ var _Object = emptyObj.constructor;
 var hasOwnProp = emptyObj.hasOwnProperty;
 function _generateDocFrag(args) {
   var frag = document.createDocumentFragment();
-  args.forEach(arg =>
-    frag.appendChild(
-      arg instanceof Node ? arg : document.createTextNode(String(arg))
-    )
-  );
+  args.forEach(arg => frag.appendChild(arg instanceof Node ? arg : document.createTextNode(String(arg))));
   return frag;
 }
 function checkAndPatch(o, prop, opt) {
   if (prop in o) {
     var val = o[prop];
     var patch = opt.patch,
-      name = opt.name;
+        name = opt.name;
 
     if (opt.bind) {
       patch[name] = val.bind(opt.bind);
@@ -47,16 +43,12 @@ function checkAndPatch(o, prop, opt) {
 
   return false;
 }
-var isBrowser =
-  typeof window !== "undefined" &&
-  ((window.navigator && !!window.navigator.userAgent) ||
-    (window.document && !!document.createElement));
-var defer =
-  typeof Promise == "function"
-    ? Promise.prototype.then.bind(Promise.resolve())
-    : setTimeout;
+var domContext = typeof window !== "undefined" && (window.navigator && !!window.navigator.userAgent || window.document && !!document.createElement);
+var workerContext = typeof self !== "undefined" && !!self.postMessage && typeof importScripts === "function";
+var isBrowser = domContext || workerContext;
+var defer = typeof Promise == "function" ? Promise.prototype.then.bind(Promise.resolve()) : setTimeout;
 
-var util = {
+var util = ({
   patchGlobalThis: patchGlobalThis,
   has: has,
   emptyObj: emptyObj,
@@ -66,22 +58,21 @@ var util = {
   hasOwnProp: hasOwnProp,
   _generateDocFrag: _generateDocFrag,
   checkAndPatch: checkAndPatch,
+  domContext: domContext,
+  workerContext: workerContext,
   isBrowser: isBrowser,
   defer: defer
-};
+});
 
 var browserOnlyWarning = {
   warn(msg) {
-    if (!isBrowser)
-      console.warn(
-        msg ||
-          "Some functionalities only eork in browsing context. Expect errors."
-      );
+    if (!isBrowser) console.warn(msg || "Some functionalities only eork in browsing context. Expect errors.");
   },
 
   _throw(msg) {
-    throw new Error(msg || "A web browser is required for this module to run!");
+    if (!isBrowser) throw new Error(msg || "A web browser is required for this module to run!");
   }
+
 };
 
 async function base64ToArrayBuffer(b64) {
@@ -91,18 +82,15 @@ async function base64ToArrayBuffer(b64) {
   return await data.arrayBuffer();
 }
 
-var keys =
-  "keys" in _Object
-    ? _Object.keys
-    : function Object_keys(a) {
-        var arr = [];
+var keys = "keys" in _Object ? _Object.keys : function Object_keys(a) {
+  var arr = [];
 
-        for (var i in a) {
-          hasOwnProp.call(a, i) && arr.push(i);
-        }
+  for (var i in a) {
+    hasOwnProp.call(a, i) && arr.push(i);
+  }
 
-        return arr;
-      };
+  return arr;
+};
 
 function objToCSSString(a) {
   if ("string" == typeof a) return a;
@@ -115,42 +103,34 @@ function objToCSSString(a) {
   return b.join(";");
 }
 
-var assign =
-  "assign" in _Object
-    ? _Object.assign
-    : function Object_assign(target) {
-        for (var i = 1; i < arguments.length; i++) {
-          var source = arguments[i];
+var assign = "assign" in _Object ? _Object.assign : function Object_assign(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i];
 
-          for (var key in source) {
-            if (hasOwnProp.call(source, key)) {
-              target[key] = source[key];
-            }
-          }
-        }
+    for (var key in source) {
+      if (hasOwnProp.call(source, key)) {
+        target[key] = source[key];
+      }
+    }
+  }
 
-        return target;
-      };
+  return target;
+};
 
 function CSSStringToObj(css) {
   if ("object" == typeof css) return css;
   var rules = css.split(";");
   return rules.reduce((acc, d) => {
     var ruleAndValue = d.split(":"),
-      fObj = {};
-    return 1 < ruleAndValue.length
-      ? ((fObj[ruleAndValue[0].trim()] = ruleAndValue[1].trim()),
-        assign(acc, filaObj))
-      : acc;
+        fObj = {};
+    return 1 < ruleAndValue.length ? (fObj[ruleAndValue[0].trim()] = ruleAndValue[1].trim(), assign(acc, filaObj)) : acc;
   }, {});
 }
 
 function nextEvent(obj, event) {
-  return new Promise(res =>
-    obj.addEventListener(event, res, {
-      once: true
-    })
-  );
+  return new Promise(res => obj.addEventListener(event, res, {
+    once: true
+  }));
 }
 
 function arrayBufferToBase64(buffer) {
@@ -173,7 +153,7 @@ function arrayBufferToBase64(buffer) {
 
 function retry(fn, max, bind) {
   max = max || 3;
-  return async function() {
+  return async function () {
     var tries = 0;
 
     while (tries < max) {
@@ -184,9 +164,7 @@ function retry(fn, max, bind) {
       }
     }
 
-    throw new Error(
-      "function " + (fn.name || "") + " failed " + max + " times"
-    );
+    throw new Error("function " + (fn.name || "") + " failed " + max + " times");
   };
 }
 
@@ -195,13 +173,7 @@ function urlencode(a) {
   if (globalThis.URLSearchParams) {
     return new URLSearchParams(a).toString();
   } else {
-    return (
-      "" +
-      obj
-        .keys(a)
-        .map(b => encodeURIComponent(b) + "=" + encodeURIComponent(a[b]))
-        .join("&")
-    );
+    return "" + obj.keys(a).map(b => encodeURIComponent(b) + "=" + encodeURIComponent(a[b])).join("&");
   }
 }
 
@@ -233,6 +205,73 @@ function loadCSS(url) {
   });
 }
 
+var key = "@@__ScriptsLOADED";
+var global = patchGlobalThis();
+var moduleMap = {};
+global[key] = moduleMap;
+function _import(src, type) {
+  browserOnlyWarning._throw("Cannot Import scripts without a browser context");
+
+  if (domContext) {
+    var script = assign(document.createElement("script"), {
+      type: type || "text/javascript",
+      charset: "utf-8"
+    });
+
+    if (type === "module") {
+      return loadModuleScript(script, src);
+    }
+
+    return loadTraditionalScript(script, src);
+  } else if (workerContext) {
+    return importScripts(src);
+  }
+}
+
+function loadModuleScript(script, src) {
+  var evt = "loaded__" + src;
+  assign(script, {
+    text: "import * as Obj from \"" + src + "\";\n    window[\"" + key + "\"][\"" + src + "\"]=Obj;\n    dispatchEvent(new Event(\"" + evt + "\"))"
+  });
+  return new Promise((resolve, reject) => {
+    var res = () => {
+      resolve(global[key][src]);
+    };
+
+    window.addEventListener(evt, res, {
+      once: true
+    });
+    document.head.appendChild(script);
+  });
+}
+
+function loadTraditionalScript(script, src) {
+  return new Promise((resolve, reject) => {
+    assign(script, {
+      src
+    });
+
+    var res = () => {
+      clearListeners();
+      resolve(script);
+    };
+
+    var rej = () => {
+      clearListeners();
+      reject(script);
+    };
+
+    function clearListeners() {
+      script.removeEventListener("load", res);
+      script.removeEventListener("error", rej);
+    }
+
+    script.addEventListener("load", res);
+    script.addEventListener("error", rej);
+    document.head.appendChild(script);
+  });
+}
+
 var _global = patchGlobalThis();
 
 var HAS_MAP = has("Map", _global);
@@ -243,8 +282,8 @@ var s = "__@@set";
 
 var _isNaN = k => k !== k;
 
-var _EqCheck = (x, y) => x === y || (_isNaN(x) && _isNaN(y));
-var normalizeNegativeZero = k => (k === 0 ? 0 : k);
+var _EqCheck = (x, y) => x === y || _isNaN(x) && _isNaN(y);
+var normalizeNegativeZero = k => k === 0 ? 0 : k;
 
 var entries, values, keys$1;
 
@@ -266,7 +305,7 @@ if (typeof Symbol !== "undefined") {
     var kv = isKey ? 0 : 1;
     return {
       [Symbol.toStringTag]: "Map Iterator",
-      [Symbol.iterator]: function() {
+      [Symbol.iterator]: function () {
         return this;
       },
       next: function next() {
@@ -342,8 +381,8 @@ function setPrototypeProps(FakeMap) {
   FakeMap.prototype.forEach = function forEach(cb, that) {
     for (var arr of this[m]) {
       var a = arr[1],
-        b = arr[0],
-        c = this;
+          b = arr[0],
+          c = this;
       that ? cb.call(that, a, b, c) : cb(a, b, c);
     }
   };
@@ -369,11 +408,7 @@ function setPrototypeProps(FakeMap) {
 }
 
 function _instanceof(left, right) {
-  if (
-    right != null &&
-    typeof Symbol !== "undefined" &&
-    right[Symbol.hasInstance]
-  ) {
+  if (right != null && typeof Symbol !== "undefined" && right[Symbol.hasInstance]) {
     return !!right[Symbol.hasInstance](left);
   } else {
     return left instanceof right;
@@ -388,8 +423,7 @@ function _classCallCheck(instance, Constructor) {
 
 function generateMap(it) {
   if (it == null) return;
-  if (!isIterable$1(it))
-    throw new Error("value:" + String(it) + " is not iterable");
+  if (!isIterable$1(it)) throw new Error("value:" + String(it) + " is not iterable");
 
   for (k of it) {
     if (!k || k.length !== 2) throw new Error("invalid arg");
@@ -410,6 +444,7 @@ setPrototypeProps(FakeMap);
 var entries$1, values$1, keys$2;
 
 if (typeof Symbol !== "undefined") {
+
   entries$1 = function entries() {
     return setKeyValIterator(this, true);
   };
@@ -420,7 +455,7 @@ if (typeof Symbol !== "undefined") {
     var len = _.length;
     return {
       [Symbol.toStringTag]: "Set Iterator",
-      [Symbol.iterator]: function() {
+      [Symbol.iterator]: function () {
         return this;
       },
       next: function next() {
@@ -480,7 +515,7 @@ function setPrototypeProps$1(FakeSet) {
   FakeSet.prototype.forEach = function forEach(cb, that) {
     for (var arr of this[s]) {
       var a = arr,
-        c = this;
+          c = this;
       that ? cb.call(that, a, a, c) : cb(a, a, c);
     }
   };
@@ -507,8 +542,7 @@ function setPrototypeProps$1(FakeSet) {
 
 function generateSet(it) {
   if (it == null) return;
-  if (!isIterable$1(it))
-    throw new Error("value:" + String(it) + " is not iterable");
+  if (!isIterable$1(it)) throw new Error("value:" + String(it) + " is not iterable");
 
   for (k of it) {
     this.add(k);
@@ -571,22 +605,13 @@ function isObjectOrThrow(i) {
   }
 }
 
-var __WEAK__KEY =
-  "@@WeakMap__" +
-  +new Date() +
-  Math.random().toString(16) +
-  "-" +
-  _getCryptoOrMathRandom();
+var __WEAK__KEY = "@@WeakMap__" + +new Date() + Math.random().toString(16) + "-" + _getCryptoOrMathRandom();
 
-var patchObjectSealingMethods = _patchObjectSealingMethods.bind(
-  void 0,
-  __WEAK__KEY
-);
+var patchObjectSealingMethods = _patchObjectSealingMethods.bind(void 0, __WEAK__KEY);
 
 function generateMap$1(it) {
   if (it == null) return;
-  if (!isIterable$1(it))
-    throw new Error("value:" + String(it) + " is not iterable");
+  if (!isIterable$1(it)) throw new Error("value:" + String(it) + " is not iterable");
 
   for (k of it) {
     if (!k || k.length !== 2) throw new Error("invalid arg");
@@ -654,12 +679,12 @@ FakeWeakMap.prototype = {
     delete key[__WEAK__KEY][this._id];
     return true;
   }
+
 };
 
 function generateSet$1(it) {
   if (it == null) return;
-  if (!isIterable(it))
-    throw new Error("value:" + String(it) + " is not iterable");
+  if (!isIterable(it)) throw new Error("value:" + String(it) + " is not iterable");
 
   for (k of it) {
     this.__map.set(k, k);
@@ -690,73 +715,66 @@ FakeWeakSet.prototype = {
   delete(k) {
     return this.__map.delete(k);
   }
+
 };
 
-var es6 = {
+
+
+var es6 = ({
   FakeMap: FakeMap,
   FakeSet: FakeSet,
   FakeWeakMap: FakeWeakMap,
   patchObjectSealingMethods: patchObjectSealingMethods,
   FakeWeakSet: FakeWeakSet
+});
+
+var entries$2 = "entries" in _Object ? _Object.entries : function Object_entries(a) {
+  var keys = keys(a);
+  var kLen = keys.length;
+  var ret = Array(kLen);
+
+  while (kLen--) {
+    var p = keys[kLen];
+    ret[kLen] = [p, a[p]];
+  }
+
+  return ret;
 };
 
-var entries$2 =
-  "entries" in _Object
-    ? _Object.entries
-    : function Object_entries(a) {
-        var keys = keys(a);
-        var kLen = keys.length;
-        var ret = Array(kLen);
+var values$2 = "values" in _Object ? _Object.values : function Object_values(a) {
+  var arr = [];
 
-        while (kLen--) {
-          var p = keys[kLen];
-          ret[kLen] = [p, a[p]];
-        }
+  for (var i of keys(a)) {
+    arr.push(a[i]);
+  }
 
-        return ret;
-      };
+  return arr;
+};
 
-var values$2 =
-  "values" in _Object
-    ? _Object.values
-    : function Object_values(a) {
-        var arr = [];
+var fromEntries = "fromEntries" in _Object ? _Object.fromEntries : function Object_fromEntries(entries) {
+  var ret = {};
+  entries.forEach(k => ret[k[0]] = k[1]);
+  return ret;
+};
 
-        for (var i of keys(a)) {
-          arr.push(a[i]);
-        }
+var is = "is" in _Object ? _Object.is : function is(x, y) {
+  if (x === y) {
+    return x !== 0 || 1 / x === 1 / y;
+  } else {
+    return x !== x && y !== y;
+  }
+};
 
-        return arr;
-      };
 
-var fromEntries =
-  "fromEntries" in _Object
-    ? _Object.fromEntries
-    : function Object_fromEntries(entries) {
-        var ret = {};
-        entries.forEach(k => (ret[k[0]] = k[1]));
-        return ret;
-      };
 
-var is =
-  "is" in _Object
-    ? _Object.is
-    : function is(x, y) {
-        if (x === y) {
-          return x !== 0 || 1 / x === 1 / y;
-        } else {
-          return x !== x && y !== y;
-        }
-      };
-
-var _Object$1 = {
+var _Object$1 = ({
   Object_assign: assign,
   Object_keys: keys,
   Object_entries: entries$2,
   Object_values: values$2,
   Object_fromEntries: fromEntries,
   Object_is: is
-};
+});
 
 function Element_after(element) {
   browserOnlyWarning._throw();
@@ -786,11 +804,13 @@ function Element_prepend(element) {
   element.insertBefore(frag, element.firstChild);
 }
 
-var Element = {
+
+
+var Element = ({
   Element_after: Element_after,
   Element_append: Element_append,
   Element_prepend: Element_prepend
-};
+});
 
 var obj$1 = {
   arrayBufferToBase64,
@@ -801,7 +821,8 @@ var obj$1 = {
   loadCSS,
   retry,
   nextEvent,
-  util
+  util,
+  _import
 };
 
 assign(obj$1, _Object$1, Element, es6);

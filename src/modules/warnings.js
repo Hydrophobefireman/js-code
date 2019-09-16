@@ -8,6 +8,9 @@ export const browserOnlyWarning = {
       );
   },
   _throw(msg) {
-    throw new Error(msg || "A web browser is required for this module to run!");
+    if (!isBrowser)
+      throw new Error(
+        msg || "A web browser is required for this module to run!"
+      );
   }
 };

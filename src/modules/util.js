@@ -60,10 +60,15 @@ export function checkAndPatch(o, prop, opt) {
   }
   return false;
 }
-export const isBrowser =
+export const domContext =
   typeof window !== "undefined" &&
   ((window.navigator && !!window.navigator.userAgent) ||
     (window.document && !!document.createElement));
+export const workerContext =
+  typeof self !== "undefined" &&
+  !!self.postMessage &&
+  typeof importScripts === "function";
+export const isBrowser = domContext || workerContext;
 
 export const defer =
   typeof Promise == "function"

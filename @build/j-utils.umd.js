@@ -48,7 +48,9 @@
 
     return false;
   }
-  var isBrowser = typeof window !== "undefined" && (window.navigator && !!window.navigator.userAgent || window.document && !!document.createElement);
+  var domContext = typeof window !== "undefined" && (window.navigator && !!window.navigator.userAgent || window.document && !!document.createElement);
+  var workerContext = typeof self !== "undefined" && !!self.postMessage && typeof importScripts === "function";
+  var isBrowser = domContext || workerContext;
   var defer = typeof Promise == "function" ? Promise.prototype.then.bind(Promise.resolve()) : setTimeout;
 
   var util = ({
@@ -61,6 +63,8 @@
     hasOwnProp: hasOwnProp,
     _generateDocFrag: _generateDocFrag,
     checkAndPatch: checkAndPatch,
+    domContext: domContext,
+    workerContext: workerContext,
     isBrowser: isBrowser,
     defer: defer
   });
@@ -71,7 +75,7 @@
     },
 
     _throw(msg) {
-      throw new Error(msg || "A web browser is required for this module to run!");
+      if (!isBrowser) throw new Error(msg || "A web browser is required for this module to run!");
     }
 
   };
@@ -203,6 +207,73 @@
       link.addEventListener("load", () => res());
       link.addEventListener("error", () => rej());
       Element_append(document.head, link);
+    });
+  }
+
+  var key = "@@__ScriptsLOADED";
+  var global = patchGlobalThis();
+  var moduleMap = {};
+  global[key] = moduleMap;
+  function _import(src, type) {
+    browserOnlyWarning._throw("Cannot Import scripts without a browser context");
+
+    if (domContext) {
+      var script = assign(document.createElement("script"), {
+        type: type || "text/javascript",
+        charset: "utf-8"
+      });
+
+      if (type === "module") {
+        return loadModuleScript(script, src);
+      }
+
+      return loadTraditionalScript(script, src);
+    } else if (workerContext) {
+      return importScripts(src);
+    }
+  }
+
+  function loadModuleScript(script, src) {
+    var evt = "loaded__" + src;
+    assign(script, {
+      text: "import * as Obj from \"" + src + "\";\n    window[\"" + key + "\"][\"" + src + "\"]=Obj;\n    dispatchEvent(new Event(\"" + evt + "\"))"
+    });
+    return new Promise((resolve, reject) => {
+      var res = () => {
+        resolve(global[key][src]);
+      };
+
+      window.addEventListener(evt, res, {
+        once: true
+      });
+      document.head.appendChild(script);
+    });
+  }
+
+  function loadTraditionalScript(script, src) {
+    return new Promise((resolve, reject) => {
+      assign(script, {
+        src
+      });
+
+      var res = () => {
+        clearListeners();
+        resolve(script);
+      };
+
+      var rej = () => {
+        clearListeners();
+        reject(script);
+      };
+
+      function clearListeners() {
+        script.removeEventListener("load", res);
+        script.removeEventListener("error", rej);
+      }
+
+      script.addEventListener("load", res);
+      script.addEventListener("error", rej);
+      document.head.appendChild(script);
     });
   }
 
@@ -755,7 +826,8 @@
     loadCSS,
     retry,
     nextEvent,
-    util
+    util,
+    _import
   };
 
   assign(obj$1, _Object$1, Element, es6);

@@ -6,6 +6,7 @@ import arrayBufferToBase64 from "./src/modules/arrayBufferToBase64/index.js";
 import retry from "./src/modules/retry/index.js";
 import urlencode from "./src/modules/urlencode/index.js";
 import loadCSS from "./src/modules/loadCSS/index.js";
+import _import from "./src/modules/_import/index.js";
 import * as es6 from "./src/modules/es6/loose/index.js";
 import * as _Object from "./src/modules/Object/index.js";
 import * as Element from "./src/modules/Element/index.js";
@@ -19,7 +20,8 @@ const obj = {
   loadCSS,
   retry,
   nextEvent,
-  util
+  util,
+  _import
 };
 
 _Object.Object_assign(obj, _Object, Element, es6);
