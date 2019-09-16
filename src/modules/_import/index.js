@@ -24,6 +24,8 @@ export default function _import(src, type) {
   }
 }
 function loadModuleScript(script, src) {
+  const sc = global[key][src];
+  if (sc) return sc;
   const evt = `loaded__${src}`;
   assign(script, {
     text: `import * as Obj from "${src}";
