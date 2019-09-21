@@ -1,0 +1,10 @@
+import { patchGlobalThis as patch, has } from "../../util.js";
+let _global = patch();
+export const HAS_MAP = has("Map", _global);
+export const HAS_SET = has("Set", _global);
+export const HAS_WEAK = has("WeakMap", _global) && has("WeakSet", _global);
+export const m = "__@@map";
+export const s = "__@@set";
+const _isNaN = (k: any) => k !== k;
+export const _EqCheck = (x: any, y: any) => x === y || (_isNaN(x) && _isNaN(y));
+export const normalizeNegativeZero = (k: any) => (k === 0 ? 0 : k);
