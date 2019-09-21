@@ -1,10 +1,7 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const constants_js_1 = require("../constants.js");
-const proto_js_1 = __importDefault(require("./proto.js"));
+const proto_js_1 = require("./proto.js");
 const util_js_1 = require("../../../util.js");
 const shared_js_1 = require("../../../../shared.js");
 function generateSet(fs, it) {

@@ -1,11 +1,8 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const warnings_js_1 = require("../warnings.js");
-const assign_js_1 = __importDefault(require("../Object/assign.js"));
-const append_js_1 = __importDefault(require("../Element/append.js"));
+const assign_js_1 = require("../Object/assign.js");
+const append_js_1 = require("../Element/append.js");
 function loadCSS(url) {
     warnings_js_1.browserOnlyWarning._throw();
     const link = assign_js_1.default(document.createElement("link"), {

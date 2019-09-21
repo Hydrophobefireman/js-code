@@ -1,11 +1,8 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const constants_js_1 = require("../constants.js");
-const _Symbol_js_1 = __importDefault(require("./_Symbol.js"));
-const assign_js_1 = __importDefault(require("../../../Object/assign.js"));
+const _Symbol_js_1 = require("./_Symbol.js");
+const assign_js_1 = require("../../../Object/assign.js");
 function setPrototypeProps(FakeSet) {
     FakeSet.prototype.add = function set(k) {
         if (!this.has(k))

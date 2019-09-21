@@ -1,11 +1,8 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const warnings_js_1 = require("../warnings.js");
 const util_js_1 = require("../util.js");
-const assign_js_1 = __importDefault(require("../Object/assign.js"));
+const assign_js_1 = require("../Object/assign.js");
 const key = "@@__ScriptsLOADED";
 const global = util_js_1.patchGlobalThis();
 const moduleMap = {};

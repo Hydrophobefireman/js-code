@@ -1,11 +1,8 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const constants_js_1 = require("../constants.js");
-const _Symbol_js_1 = __importDefault(require("./_Symbol.js"));
-const assign_js_1 = __importDefault(require("../../../Object/assign.js"));
+const _Symbol_js_1 = require("./_Symbol.js");
+const assign_js_1 = require("../../../Object/assign.js");
 function __i_getMapArr(that, k) {
     for (const i of that[constants_js_1.m]) {
         if (constants_js_1._EqCheck(i[0], k))
