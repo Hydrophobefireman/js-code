@@ -8,3 +8,5 @@ export const s = "__@@set";
 const _isNaN = (k: any) => k !== k;
 export const _EqCheck = (x: any, y: any) => x === y || (_isNaN(x) && _isNaN(y));
 export const normalizeNegativeZero = (k: any) => (k === 0 ? 0 : k);
+export const _mapKey = "__@@mkey";
+export const _mapVal = "__@mVal";
