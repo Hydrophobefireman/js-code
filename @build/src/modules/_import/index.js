@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const warnings_js_1 = require("../warnings.js");
 const util_js_1 = require("../util.js");
 const assign_js_1 = require("../Object/assign.js");
 const key = "@@__ScriptsLOADED";
@@ -8,7 +7,8 @@ const global = util_js_1.patchGlobalThis();
 const moduleMap = {};
 global[key] = moduleMap;
 function _import(src, type) {
-    warnings_js_1.browserOnlyWarning._throw("Cannot Import scripts without a browser context");
+    if (!util_js_1.isBrowser && typeof require == "function")
+        return Promise.resolve(require(src));
     if (util_js_1.domContext) {
         const script = assign_js_1.default(document.createElement("script"), {
             type: type || "text/javascript",

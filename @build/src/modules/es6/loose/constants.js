@@ -10,3 +10,5 @@ exports.s = "__@@set";
 const _isNaN = (k) => k !== k;
 exports._EqCheck = (x, y) => x === y || (_isNaN(x) && _isNaN(y));
 exports.normalizeNegativeZero = (k) => (k === 0 ? 0 : k);
+exports._mapKey = "__@@mkey";
+exports._mapVal = "__@mVal";

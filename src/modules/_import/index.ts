@@ -5,6 +5,7 @@ const key = "@@__ScriptsLOADED";
 interface globalThis {
   [key]?: { [src: string]: any };
 }
+declare var require:(src:string)=>any
 const global = patchGlobalThis() as globalThis;
 const moduleMap = {};
 global[key] = moduleMap;
