@@ -5,6 +5,7 @@
   "main": "@build/src/index.js",
   "author": "Hydrophobefireman",
   "license": "ISC",
+  "sideEffects": false,
   "module": "./@build-modern/src/index.js",
   "scripts": {
     "build": "tsc && tsc --build tsconfig.modern.json",
