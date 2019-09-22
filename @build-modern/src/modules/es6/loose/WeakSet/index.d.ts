@@ -8,6 +8,7 @@ interface FakeWeakSet<T extends object> {
 }
 interface FakeWeakSetConstructor {
     new <T extends object = object>(values?: ReadonlyArray<T> | null): FakeWeakSet<T>;
+    [Symbol.species]: FakeWeakSetConstructor;
     prototype: FakeWeakSet<object>;
 }
 /**

@@ -25,6 +25,7 @@ const FakeWeakSet = function FakeWeakSet(iterable, forceUseCustomImplementations
     this.__map = new _WeakMap(null, forceUseCustomImplementations);
     generateSet(this, iterable);
 };
+FakeWeakSet[Symbol.species] = FakeWeakSet;
 FakeWeakSet.prototype = {
     [Symbol.toStringTag]: "WeakSet",
     add(k) {

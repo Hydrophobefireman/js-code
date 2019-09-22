@@ -1,12 +1,12 @@
-import { browserOnlyWarning } from "../warnings.js";
-import { domContext, workerContext, patchGlobalThis } from "../util.js";
+import { isBrowser, domContext, workerContext, patchGlobalThis } from "../util.js";
 import assign from "../Object/assign.js";
 const key = "@@__ScriptsLOADED";
 const global = patchGlobalThis();
 const moduleMap = {};
 global[key] = moduleMap;
 export default function _import(src, type) {
-    browserOnlyWarning._throw("Cannot Import scripts without a browser context");
+    if (!isBrowser && typeof require == "function")
+        return Promise.resolve(require(src));
     if (domContext) {
         const script = assign(document.createElement("script"), {
             type: type || "text/javascript",

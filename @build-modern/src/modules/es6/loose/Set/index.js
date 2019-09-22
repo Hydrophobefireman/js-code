@@ -19,4 +19,5 @@ const FakeSet = function FakeSet(iterable, forceUseCustomImplementation) {
     generateSet(this, iterable);
 };
 setup(FakeSet);
+FakeSet[Symbol.species] = FakeSet;
 export default FakeSet;

@@ -3,3 +3,4 @@ export declare function initializeInternalKeyProp(obj: object, key: string): voi
 export declare type sealableMethod = "freeze" | "seal" | "preventExtensions";
 export declare function _patchObjectSealingMethods(key: string): void;
 export declare function isObjectOrThrow(i: object): void;
+export declare function _patchPropertyDescriptorMethods(key: string): void;

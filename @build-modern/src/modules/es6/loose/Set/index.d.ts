@@ -16,6 +16,7 @@ interface FakeSet<T> {
 export interface FakeSetConstructor {
     new <T = any>(values?: ReadonlyArray<T> | null): FakeSet<T>;
     readonly prototype: FakeSet<any>;
+    [Symbol.species]: FakeSetConstructor;
 }
 declare const FakeSet: FakeSetConstructor;
 export default FakeSet;

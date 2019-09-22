@@ -4,7 +4,7 @@ export default function retry(fn, max, bind) {
         let tries = 0;
         while (tries < max) {
             try {
-                return await fn.apply(bind, [].concat.call(arguments));
+                return await fn.apply(bind, [].slice.call(arguments));
             }
             catch (e) {
                 tries++;
