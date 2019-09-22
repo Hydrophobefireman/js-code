@@ -10,6 +10,7 @@ const __WEAK__KEY = "@@WeakMap__" +
     "-" +
     Weak_shared_js_1._getCryptoOrMathRandom();
 exports.patchObjectSealingMethods = Weak_shared_js_1._patchObjectSealingMethods.bind(void 0, __WEAK__KEY);
+exports.patchPropertyDescriptorMethods = Weak_shared_js_1._patchPropertyDescriptorMethods.bind(void 0, __WEAK__KEY);
 function generateMap(fm, it) {
     if (it == null)
         return;
@@ -34,6 +35,7 @@ const FakeWeakMap = function FakeWeakMap(iterable, forceUseCustomImplementation)
         return new WeakMap(iterable);
     shared_js_1._classCallCheck(this, FakeWeakMap);
     exports.patchObjectSealingMethods();
+    exports.patchPropertyDescriptorMethods();
     this._id = ++weakMapIds;
     generateMap(this, iterable);
 };
@@ -41,6 +43,7 @@ function _getKeyValArr(key, id) {
     const c = key[__WEAK__KEY];
     return c ? c[id] : void 0;
 }
+FakeWeakMap[Symbol.species] = FakeWeakMap;
 function initSafeSetup(key) {
     Weak_shared_js_1.isObjectOrThrow(key);
     Weak_shared_js_1.initializeInternalKeyProp(key, __WEAK__KEY);

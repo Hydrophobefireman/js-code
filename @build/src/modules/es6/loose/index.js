@@ -7,5 +7,6 @@ exports.FakeSet = index_js_2.default;
 var index_js_3 = require("./WeakMap/index.js");
 exports.FakeWeakMap = index_js_3.default;
 exports.patchObjectSealingMethods = index_js_3.patchObjectSealingMethods;
+exports.patchPropertyDescriptorMethods = index_js_3.patchPropertyDescriptorMethods;
 var index_js_4 = require("./WeakSet/index.js");
 exports.FakeWeakSet = index_js_4.default;

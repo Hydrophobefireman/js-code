@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const util_js_1 = require("../../util.js");
+const keys_js_1 = require("../../Object/keys.js");
 const e = {};
 const gl = util_js_1.patchGlobalThis();
 function _getCryptoOrMathRandom() {
@@ -43,3 +44,24 @@ function isObjectOrThrow(i) {
     }
 }
 exports.isObjectOrThrow = isObjectOrThrow;
+function _patchPropertyDescriptorMethods(key) {
+    if (util_js_1.has("getOwnPropertyDescriptors", Object)) {
+        const oldOPD = Object.getOwnPropertyDescriptors;
+        Object.getOwnPropertyDescriptors = function (o) {
+            const prevDescriptors = oldOPD(o);
+            const ret = {};
+            keys_js_1.default(prevDescriptors).forEach(x => {
+                if (x !== key)
+                    ret[x] = prevDescriptors[x];
+            });
+            return ret;
+        };
+    }
+    if (util_js_1.has("getOwnPropertyNames", Object)) {
+        const oldOPN = Object.getOwnPropertyNames;
+        Object.getOwnPropertyNames = function (o) {
+            return oldOPN(o).filter(x => x !== key);
+        };
+    }
+}
+exports._patchPropertyDescriptorMethods = _patchPropertyDescriptorMethods;

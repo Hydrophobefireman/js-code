@@ -1,4 +1,5 @@
 export declare const patchObjectSealingMethods: () => void;
+export declare const patchPropertyDescriptorMethods: () => void;
 interface FakeWeakMap<K extends object, V> {
     delete(key: K): boolean;
     get(key: K): V | undefined;
@@ -9,6 +10,7 @@ interface FakeWeakMap<K extends object, V> {
 }
 interface FakeWeakMapConstructor {
     new <K extends object = object, V = any>(entries?: ReadonlyArray<[K, V]> | null, forceUseCustomImplementation?: boolean): FakeWeakMap<K, V>;
+    [Symbol.species]: FakeWeakMapConstructor;
     prototype: FakeWeakMap<object, any>;
 }
 /**

@@ -21,4 +21,5 @@ const FakeSet = function FakeSet(iterable, forceUseCustomImplementation) {
     generateSet(this, iterable);
 };
 proto_js_1.default(FakeSet);
+FakeSet[Symbol.species] = FakeSet;
 exports.default = FakeSet;
