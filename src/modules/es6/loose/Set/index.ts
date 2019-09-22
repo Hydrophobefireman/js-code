@@ -31,6 +31,7 @@ interface FakeSet<T> {
 export interface FakeSetConstructor {
   new <T = any>(values?: ReadonlyArray<T> | null): FakeSet<T>;
   readonly prototype: FakeSet<any>;
+  [Symbol.species]: FakeSetConstructor;
 }
 
 const FakeSet = (function FakeSet<T>(
@@ -44,5 +45,5 @@ const FakeSet = (function FakeSet<T>(
   generateSet(this, iterable);
 } as any) as FakeSetConstructor;
 setup(FakeSet);
-
+FakeSet[Symbol.species] = FakeSet;
 export default FakeSet;

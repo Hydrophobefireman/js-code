@@ -23,6 +23,7 @@ interface FakeWeakSetConstructor {
   new <T extends object = object>(
     values?: ReadonlyArray<T> | null
   ): FakeWeakSet<T>;
+  [Symbol.species]: FakeWeakSetConstructor;
   prototype: FakeWeakSet<object>;
 }
 /**
@@ -43,6 +44,7 @@ const FakeWeakSet = (function FakeWeakSet<T extends object>(
   generateSet(this, iterable);
 } as any) as FakeWeakSetConstructor;
 
+FakeWeakSet[Symbol.species] = FakeWeakSet;
 FakeWeakSet.prototype = {
   [Symbol.toStringTag]: "WeakSet",
   add<T extends object>(k: T): FakeWeakSet<T> {

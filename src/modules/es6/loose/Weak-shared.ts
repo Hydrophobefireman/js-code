@@ -1,4 +1,5 @@
 import { has, patchGlobalThis } from "../../util.js";
+import keys from "../../Object/keys.js";
 const e = {};
 const gl = patchGlobalThis();
 export function _getCryptoOrMathRandom(): string {
@@ -38,5 +39,29 @@ export function _patchObjectSealingMethods(key: string) {
 export function isObjectOrThrow(i: object): void {
   if (Object(i) !== i) {
     throw new Error("Invalid value");
+  }
+}
+
+export function _patchPropertyDescriptorMethods(key: string) {
+  if (has("getOwnPropertyDescriptors", Object)) {
+    const oldOPD = Object.getOwnPropertyDescriptors;
+    Object.getOwnPropertyDescriptors = function<T>(
+      o: T
+    ): { [P in keyof T]: TypedPropertyDescriptor<T[P]> } & {
+      [x: string]: PropertyDescriptor;
+    } {
+      const prevDescriptors = oldOPD(o);
+      const ret = {} as typeof prevDescriptors;
+      keys(prevDescriptors).forEach(x => {
+        if (x !== key) (ret as any)[x] = prevDescriptors[x];
+      });
+      return ret;
+    };
+  }
+  if (has("getOwnPropertyNames", Object)) {
+    const oldOPN = Object.getOwnPropertyNames;
+    Object.getOwnPropertyNames = function(o: any): string[] {
+      return oldOPN(o).filter(x => x !== key);
+    };
   }
 }

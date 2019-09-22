@@ -4,7 +4,8 @@ import {
   _getCryptoOrMathRandom,
   initializeInternalKeyProp,
   _patchObjectSealingMethods,
-  isObjectOrThrow
+  isObjectOrThrow,
+  _patchPropertyDescriptorMethods
 } from "../Weak-shared.js";
 import { _classCallCheck } from "../../../../shared.js";
 const __WEAK__KEY =
@@ -19,6 +20,10 @@ interface patchedObj {
   };
 }
 export const patchObjectSealingMethods = _patchObjectSealingMethods.bind(
+  void 0,
+  __WEAK__KEY
+);
+export const patchPropertyDescriptorMethods = _patchPropertyDescriptorMethods.bind(
   void 0,
   __WEAK__KEY
 );
@@ -44,6 +49,7 @@ interface FakeWeakMapConstructor {
     entries?: ReadonlyArray<[K, V]> | null,
     forceUseCustomImplementation?: boolean
   ): FakeWeakMap<K, V>;
+  [Symbol.species]: FakeWeakMapConstructor;
   prototype: FakeWeakMap<object, any>;
 }
 let weakMapIds = 0;
@@ -62,6 +68,7 @@ const FakeWeakMap = (function FakeWeakMap<K extends object, V>(
   if (!forceUseCustomImplementation && HAS_WEAK) return new WeakMap(iterable);
   _classCallCheck(this, FakeWeakMap);
   patchObjectSealingMethods();
+  patchPropertyDescriptorMethods();
   this._id = ++weakMapIds;
   generateMap(this, iterable);
 } as any) as FakeWeakMapConstructor;
@@ -69,6 +76,7 @@ function _getKeyValArr<K extends patchedObj>(key: K, id: number) {
   const c = key[__WEAK__KEY];
   return c ? c[id] : void 0;
 }
+FakeWeakMap[Symbol.species] = FakeWeakMap;
 function initSafeSetup<K extends patchedObj>(key: K) {
   isObjectOrThrow(key);
   initializeInternalKeyProp(key, __WEAK__KEY);

@@ -36,6 +36,17 @@ export interface FakeMapConstructor {
   readonly prototype: FakeMap<any, any>;
   [Symbol.species]: FakeMapConstructor;
 }
+
+/**
+ * Map implementation
+ *
+ * This Implementation uses One single array to store keys and values in their own arrays
+ * Key index - 0
+ * Value index - 1
+ * 
+ * we could have used 2 separate Arrays for storing keys and values in matching indices
+ * @TODO do a benchmark
+ */
 const FakeMap = (function FakeMap<K, V>(
   this: FakeMap<K, V>,
   iterable?: Iterable<[K, V]>,
