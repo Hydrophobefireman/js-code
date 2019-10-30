@@ -8,4 +8,5 @@ export { default as _import } from "./modules/_import/index.js";
 export * from "./modules/es6/loose/index.js";
 export * from "./modules/Object/index.js";
 export * from "./modules/Element/index.js";
-export * from "./modules/util.js";
+export { patchGlobalThis, has, isIterable, isBrowser, workerContext, defer } from "./modules/util.js";
+export * from "./modules/Pipes/index.js";
