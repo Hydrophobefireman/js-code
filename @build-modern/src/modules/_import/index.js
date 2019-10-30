@@ -27,9 +27,15 @@ function loadModuleScript(script, src) {
         return Promise.resolve(sc[src]);
     const evt = `loaded__${src}`;
     assign(script, {
-        text: `import * as Obj from "${src}";
-    window["${key}"]["${src}"]=Obj;
-    dispatchEvent(new Event("${evt}"))`
+        text: 'import * as Obj from "' +
+            src +
+            '";window["' +
+            key +
+            '"]["' +
+            src +
+            '"]=Obj;dispatchEvent(new Event("' +
+            evt +
+            '"))'
     });
     return new Promise((resolve, reject) => {
         const res = () => {

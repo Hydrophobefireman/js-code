@@ -8,9 +8,12 @@ function urlencode(a) {
         return new URLSearchParams(a).toString();
     }
     else {
-        return `${keys_js_1.default(a)
-            .map((b) => `${encodeURIComponent(b)}=${encodeURIComponent(a[b])}`)
-            .join("&")}`;
+        return ("" +
+            keys_js_1.default(a)
+                .map(function (b) {
+                return encodeURIComponent(b) + "=" + encodeURIComponent(a[b]);
+            })
+                .join("&"));
     }
 }
 exports.default = urlencode;

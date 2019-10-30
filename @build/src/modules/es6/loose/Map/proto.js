@@ -4,9 +4,12 @@ const constants_js_1 = require("../constants.js");
 const _Symbol_js_1 = require("./_Symbol.js");
 const assign_js_1 = require("../../../Object/assign.js");
 function __i_getMapArr(that, k) {
-    for (const i of that[constants_js_1.m]) {
-        if (constants_js_1._EqCheck(i[0], k))
-            return i;
+    const arr = that[constants_js_1.m];
+    const len = arr.length;
+    for (let i = 0; i < len; i++) {
+        const x = arr[i];
+        if (constants_js_1._EqCheck(x[0], k))
+            return x;
     }
     return null;
 }
@@ -39,8 +42,11 @@ function setPrototypeProps(FakeMap) {
         return arr ? arr[1] : undefined;
     };
     FakeMap.prototype.forEach = function forEach(cb, that) {
-        for (const arr of this[constants_js_1.m]) {
-            const a = arr[1], b = arr[0], c = this;
+        const arr = this[constants_js_1.m];
+        const len = arr.length;
+        for (let i = 0; i < len; i++) {
+            const val = arr[i];
+            const a = val[1], b = val[0], c = this;
             that ? cb.call(that, a, b, c) : cb(a, b, c);
         }
     };

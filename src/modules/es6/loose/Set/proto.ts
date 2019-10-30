@@ -1,7 +1,7 @@
 import { s, _EqCheck as is, normalizeNegativeZero } from "../constants.js";
 import symbolProps from "./_Symbol.js";
 import assign from "../../../Object/assign.js";
-type _FakeSet = import("./index").default<any>;
+
 export default function setPrototypeProps(
   FakeSet: import("./index").FakeSetConstructor
 ) {
@@ -10,8 +10,11 @@ export default function setPrototypeProps(
     return this;
   };
   FakeSet.prototype.has = function has(key) {
-    for (const i of this[s]) {
-      if (is(i, key)) return true;
+    const arr = this[s];
+    const len = arr.length;
+    for (let i = 0; i < len; i++) {
+      const x = arr[i];
+      if (is(x, key)) return true;
     }
     return false;
   };
@@ -25,8 +28,11 @@ export default function setPrototypeProps(
     return had;
   };
   FakeSet.prototype.forEach = function forEach(cb, that) {
-    for (const arr of this[s]) {
-      const a = arr,
+    const arr = this[s];
+    const len = arr.length;
+    for (let i = 0; i < len; i++) {
+      const val = arr[i];
+      const a = val,
         c = this;
       that ? cb.call(that, a, a, c) : cb(a, a, c);
     }

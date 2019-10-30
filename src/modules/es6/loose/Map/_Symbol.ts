@@ -1,7 +1,7 @@
 import { m } from "../constants.js";
-let entries: () => IterableIterator<[any, any]>,
-  values: () => IterableIterator<any>,
-  keys: () => IterableIterator<any>;
+let entries: () => IterableIterator<[any, any]>;
+let values: () => IterableIterator<any>;
+let keys: () => IterableIterator<any>;
 type FakeMap = import("./index").default<any, any>;
 if (typeof Symbol !== "undefined") {
   function mapEntriesIterator(map: FakeMap): IterableIterator<[any, any]> {

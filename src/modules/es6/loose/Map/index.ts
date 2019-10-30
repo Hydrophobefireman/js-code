@@ -6,7 +6,9 @@ function generateMap(fm: FakeMap<any, any>, it: Iterable<any> | undefined) {
   if (it == null) return;
   if (!isIterable(it))
     throw new Error("value:" + String(it) + " is not iterable");
-  for (const k of it) {
+  const len = (it as Array<any>).length;
+  for (let i = 0; i < len; i++) {
+    const k = (it as Array<any>)[i];
     if (!k || k.length !== 2) throw new Error("invalid arg");
     fm.set(k[0], k[1]);
   }
@@ -43,7 +45,7 @@ export interface FakeMapConstructor {
  * This Implementation uses One single array to store keys and values in their own arrays
  * Key index - 0
  * Value index - 1
- * 
+ *
  * we could have used 2 separate Arrays for storing keys and values in matching indices
  * @TODO do a benchmark
  */
@@ -52,9 +54,9 @@ const FakeMap = (function FakeMap<K, V>(
   iterable?: Iterable<[K, V]>,
   forceUseCustomImplementation?: boolean
 ): FakeMap<K, V> | Map<K, V> {
+  _classCallCheck(this, FakeMap);
   if (!forceUseCustomImplementation && HAS_MAP)
     return new Map(iterable as Iterable<[K, V]>);
-  _classCallCheck(this, FakeMap);
   this[m] = [];
   generateMap(this, iterable);
   return this;

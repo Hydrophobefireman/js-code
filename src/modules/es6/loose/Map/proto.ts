@@ -2,8 +2,11 @@ import { m, _EqCheck as is, normalizeNegativeZero } from "../constants.js";
 import symbolProps from "./_Symbol.js";
 import assign from "../../../Object/assign.js";
 function __i_getMapArr(that: import("./index").default<any, any>, k: any) {
-  for (const i of that[m]) {
-    if (is(i[0], k)) return i;
+  const arr = that[m];
+  const len = arr.length;
+  for (let i = 0; i < len; i++) {
+    const x = arr[i];
+    if (is(x[0], k)) return x;
   }
   return null;
 }
@@ -36,9 +39,12 @@ export default function setPrototypeProps(
     return arr ? arr[1] : undefined;
   };
   FakeMap.prototype.forEach = function forEach(cb, that) {
-    for (const arr of this[m]) {
-      const a = arr[1],
-        b = arr[0],
+    const arr = this[m];
+    const len = arr.length;
+    for (let i = 0; i < len; i++) {
+      const val = arr[i];
+      const a = val[1],
+        b = val[0],
         c = this;
       that ? cb.call(that, a, b, c) : cb(a, b, c);
     }

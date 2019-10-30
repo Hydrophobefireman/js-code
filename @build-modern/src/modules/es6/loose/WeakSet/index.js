@@ -7,7 +7,9 @@ function generateSet(fs, it) {
         return;
     if (!isIterable(it))
         throw new Error("value:" + String(it) + " is not iterable");
-    for (const k of it) {
+    const len = it.length;
+    for (let i = 0; i < len; i++) {
+        const k = it[i];
         fs.__map.set(k, k);
     }
 }
@@ -19,9 +21,9 @@ function generateSet(fs, it) {
  * @param {boolean} forceUseCustomImplementations
  */
 const FakeWeakSet = function FakeWeakSet(iterable, forceUseCustomImplementations) {
+    _classCallCheck(this, FakeWeakSet);
     if (!forceUseCustomImplementations && HAS_WEAK)
         return new WeakSet(iterable);
-    _classCallCheck(this, FakeWeakSet);
     this.__map = new _WeakMap(null, forceUseCustomImplementations);
     generateSet(this, iterable);
 };

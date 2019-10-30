@@ -1,9 +1,9 @@
 import { browserOnlyWarning } from "../warnings.js";
 /**
  * ArrayBuffer to base64 implementation using FileReader API
- * 
+ *
  * Naturally, Only works in browser environment
- * 
+ *
  * @param buffer {ArrayBuffer} ArrayBuffer to convert into base64
  * @returns {string} base64 encoded string
  */
@@ -17,8 +17,9 @@ export default function arrayBufferToBase64(
     });
     const reader = new FileReader();
     reader.onload = evt => {
+      reader.onload = null;
       if (evt == null || evt.target == null) return null;
-      const dataurl: string = evt.target.result as string;
+      const dataurl = evt.target.result as string;
       resolve(dataurl.substr(dataurl.indexOf(",") + 1));
     };
     reader.readAsDataURL(blob);

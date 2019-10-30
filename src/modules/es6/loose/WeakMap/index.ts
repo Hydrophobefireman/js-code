@@ -31,7 +31,9 @@ function generateMap(fm: FakeWeakMap<any, any>, it: Iterable<any> | undefined) {
   if (it == null) return;
   if (!isIterable(it))
     throw new Error("value:" + String(it) + " is not iterable");
-  for (const k of it) {
+  const len = (it as Array<any>).length;
+  for (let i = 0; i < len; i++) {
+    const k = (it as Array<any>)[i];
     if (!k || k.length !== 2) throw new Error("invalid arg");
     fm.set(k[0], k[1]);
   }

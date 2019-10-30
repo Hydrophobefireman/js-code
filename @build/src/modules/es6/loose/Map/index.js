@@ -9,7 +9,9 @@ function generateMap(fm, it) {
         return;
     if (!util_js_1.isIterable(it))
         throw new Error("value:" + String(it) + " is not iterable");
-    for (const k of it) {
+    const len = it.length;
+    for (let i = 0; i < len; i++) {
+        const k = it[i];
         if (!k || k.length !== 2)
             throw new Error("invalid arg");
         fm.set(k[0], k[1]);
@@ -26,9 +28,9 @@ function generateMap(fm, it) {
  * @TODO do a benchmark
  */
 const FakeMap = function FakeMap(iterable, forceUseCustomImplementation) {
+    shared_js_1._classCallCheck(this, FakeMap);
     if (!forceUseCustomImplementation && constants_js_1.HAS_MAP)
         return new Map(iterable);
-    shared_js_1._classCallCheck(this, FakeMap);
     this[constants_js_1.m] = [];
     generateMap(this, iterable);
     return this;

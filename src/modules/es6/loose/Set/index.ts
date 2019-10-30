@@ -6,7 +6,9 @@ function generateSet(fs: FakeSet<any>, it: Iterable<any> | undefined) {
   if (it == null) return;
   if (!isIterable(it))
     throw new Error("value:" + String(it) + " is not iterable");
-  for (const k of it) {
+  const len = (it as Array<any>).length;
+  for (let i = 0; i < len; i++) {
+    const k = (it as Array<any>)[i];
     fs.add(k);
   }
 }
@@ -39,8 +41,8 @@ const FakeSet = (function FakeSet<T>(
   iterable?: Iterable<T>,
   forceUseCustomImplementation?: boolean
 ) {
-  if (!forceUseCustomImplementation && HAS_SET) return new Set(iterable);
   _classCallCheck(this, FakeSet);
+  if (!forceUseCustomImplementation && HAS_SET) return new Set(iterable);
   this[s] = [];
   generateSet(this, iterable);
 } as any) as FakeSetConstructor;

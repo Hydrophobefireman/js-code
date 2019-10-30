@@ -4,7 +4,7 @@ export default "values" in _Object
     ? _Object.values
     : function Object_values(a) {
         const arr = [];
-        for (const i of keys(a))
-            arr.push(a[i]);
+        const keyArr = keys(a);
+        keyArr.forEach(i => arr.push(a[i]));
         return arr;
     };

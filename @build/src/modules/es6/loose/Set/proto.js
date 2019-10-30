@@ -10,8 +10,11 @@ function setPrototypeProps(FakeSet) {
         return this;
     };
     FakeSet.prototype.has = function has(key) {
-        for (const i of this[constants_js_1.s]) {
-            if (constants_js_1._EqCheck(i, key))
+        const arr = this[constants_js_1.s];
+        const len = arr.length;
+        for (let i = 0; i < len; i++) {
+            const x = arr[i];
+            if (constants_js_1._EqCheck(x, key))
                 return true;
         }
         return false;
@@ -27,8 +30,11 @@ function setPrototypeProps(FakeSet) {
         return had;
     };
     FakeSet.prototype.forEach = function forEach(cb, that) {
-        for (const arr of this[constants_js_1.s]) {
-            const a = arr, c = this;
+        const arr = this[constants_js_1.s];
+        const len = arr.length;
+        for (let i = 0; i < len; i++) {
+            const val = arr[i];
+            const a = val, c = this;
             that ? cb.call(that, a, a, c) : cb(a, a, c);
         }
     };

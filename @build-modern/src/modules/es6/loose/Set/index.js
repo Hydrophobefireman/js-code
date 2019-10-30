@@ -7,14 +7,16 @@ function generateSet(fs, it) {
         return;
     if (!isIterable(it))
         throw new Error("value:" + String(it) + " is not iterable");
-    for (const k of it) {
+    const len = it.length;
+    for (let i = 0; i < len; i++) {
+        const k = it[i];
         fs.add(k);
     }
 }
 const FakeSet = function FakeSet(iterable, forceUseCustomImplementation) {
+    _classCallCheck(this, FakeSet);
     if (!forceUseCustomImplementation && HAS_SET)
         return new Set(iterable);
-    _classCallCheck(this, FakeSet);
     this[s] = [];
     generateSet(this, iterable);
 };

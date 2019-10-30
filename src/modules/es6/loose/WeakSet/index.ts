@@ -7,7 +7,9 @@ function generateSet(fs: FakeWeakSet<any>, it: Iterable<any> | undefined) {
   if (it == null || !fs.__map) return;
   if (!isIterable(it))
     throw new Error("value:" + String(it) + " is not iterable");
-  for (const k of it) {
+  const len = (it as Array<any>).length;
+  for (let i = 0; i < len; i++) {
+    const k = (it as Array<any>)[i];
     fs.__map.set(k, k);
   }
 }
@@ -19,6 +21,7 @@ interface FakeWeakSet<T extends object> {
   __map?: _WeakMap<T, T>;
   readonly [Symbol.toStringTag]: string;
 }
+
 interface FakeWeakSetConstructor {
   new <T extends object = object>(
     values?: ReadonlyArray<T> | null
@@ -38,8 +41,8 @@ const FakeWeakSet = (function FakeWeakSet<T extends object>(
   iterable: Iterable<T>,
   forceUseCustomImplementations?: boolean
 ) {
-  if (!forceUseCustomImplementations && HAS_WEAK) return new WeakSet(iterable);
   _classCallCheck(this, FakeWeakSet);
+  if (!forceUseCustomImplementations && HAS_WEAK) return new WeakSet(iterable);
   this.__map = new _WeakMap(null, forceUseCustomImplementations);
   generateSet(this, iterable);
 } as any) as FakeWeakSetConstructor;

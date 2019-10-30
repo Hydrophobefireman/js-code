@@ -16,7 +16,9 @@ function generateMap(fm, it) {
         return;
     if (!util_js_1.isIterable(it))
         throw new Error("value:" + String(it) + " is not iterable");
-    for (const k of it) {
+    const len = it.length;
+    for (let i = 0; i < len; i++) {
+        const k = it[i];
         if (!k || k.length !== 2)
             throw new Error("invalid arg");
         fm.set(k[0], k[1]);

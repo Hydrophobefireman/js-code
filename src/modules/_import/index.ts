@@ -1,11 +1,15 @@
-import { browserOnlyWarning } from "../warnings.js";
-import { isBrowser, domContext, workerContext, patchGlobalThis } from "../util.js";
+import {
+  isBrowser,
+  domContext,
+  workerContext,
+  patchGlobalThis
+} from "../util.js";
 import assign from "../Object/assign.js";
 const key = "@@__ScriptsLOADED";
 interface globalThis {
   [key]?: { [src: string]: any };
 }
-declare var require:(src:string)=>any
+declare var require: (src: string) => any;
 const global = patchGlobalThis() as globalThis;
 const moduleMap = {};
 global[key] = moduleMap;
@@ -13,7 +17,8 @@ export default function _import(
   src: string,
   type: string
 ): Promise<HTMLScriptElement | any> | void {
-  if(!isBrowser&&typeof require=="function")return Promise.resolve(require(src))
+  if (!isBrowser && typeof require == "function")
+    return Promise.resolve(require(src));
   if (domContext) {
     const script: HTMLScriptElement = assign(document.createElement("script"), {
       type: type || "text/javascript",
@@ -32,9 +37,16 @@ function loadModuleScript(script: HTMLScriptElement, src: string) {
   if (sc) return Promise.resolve(sc[src]);
   const evt = `loaded__${src}`;
   assign(script, {
-    text: `import * as Obj from "${src}";
-    window["${key}"]["${src}"]=Obj;
-    dispatchEvent(new Event("${evt}"))`
+    text:
+      'import * as Obj from "' +
+      src +
+      '";window["' +
+      key +
+      '"]["' +
+      src +
+      '"]=Obj;dispatchEvent(new Event("' +
+      evt +
+      '"))'
   });
   return new Promise((resolve, reject) => {
     const res = () => {

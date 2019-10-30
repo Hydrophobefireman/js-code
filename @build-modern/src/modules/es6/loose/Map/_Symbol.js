@@ -1,5 +1,7 @@
 import { m } from "../constants.js";
-let entries, values, keys;
+let entries;
+let values;
+let keys;
 if (typeof Symbol !== "undefined") {
     function mapEntriesIterator(map) {
         const _ = map[m];

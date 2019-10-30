@@ -3,7 +3,8 @@ import { _Object } from "../util.js";
 export default "values" in _Object
   ? _Object.values
   : (function Object_values(a: import("./ot").default) {
-      const arr = [];
-      for (const i of keys(a)) arr.push(a[i]);
+      const arr: Array<any> = [];
+      const keyArr = keys(a);
+      keyArr.forEach(i => arr.push(a[i]));
       return arr;
     } as ObjectConstructor["values"]);

@@ -5,10 +5,13 @@ export default function urlencode(a: { [k: string]: string }): string {
   if (globalThis.URLSearchParams) {
     return new URLSearchParams(a).toString();
   } else {
-    return `${keys(a)
-      .map(
-        (b: string) => `${encodeURIComponent(b)}=${encodeURIComponent(a[b])}`
-      )
-      .join("&")}`;
+    return (
+      "" +
+      keys(a)
+        .map(function(b) {
+          return encodeURIComponent(b) + "=" + encodeURIComponent(a[b]);
+        })
+        .join("&")
+    );
   }
 }

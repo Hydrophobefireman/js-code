@@ -6,8 +6,11 @@ export default function urlencode(a) {
         return new URLSearchParams(a).toString();
     }
     else {
-        return `${keys(a)
-            .map((b) => `${encodeURIComponent(b)}=${encodeURIComponent(a[b])}`)
-            .join("&")}`;
+        return ("" +
+            keys(a)
+                .map(function (b) {
+                return encodeURIComponent(b) + "=" + encodeURIComponent(a[b]);
+            })
+                .join("&"));
     }
 }

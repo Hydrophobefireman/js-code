@@ -17,6 +17,7 @@ function arrayBufferToBase64(buffer) {
         });
         const reader = new FileReader();
         reader.onload = evt => {
+            reader.onload = null;
             if (evt == null || evt.target == null)
                 return null;
             const dataurl = evt.target.result;
