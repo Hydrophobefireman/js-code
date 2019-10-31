@@ -1,14 +1,24 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+function _clone(arr) {
+    const len = arr.length;
+    const ret = Array(len);
+    for (let i = 0; i < len; i++) {
+        ret[i] = arr[i];
+    }
+    return ret;
+}
 class Pipe {
-    constructor(func, _batch) {
+    constructor(func, _batch, reusable) {
         this._batch = _batch;
+        this.reusable = reusable;
         this._buffer = [func];
         this._value = null;
     }
     _commitBuffers() {
         let fn;
-        while ((fn = this._buffer.shift())) {
+        const buf = this.reusable ? _clone(this._buffer) : this._buffer;
+        while ((fn = buf.shift())) {
             this._value = fn(this._value);
         }
     }
@@ -30,13 +40,15 @@ class Pipe {
 }
 exports.Pipe = Pipe;
 class AsyncPipe extends Pipe {
-    constructor(func) {
-        super(func, true);
+    constructor(func, reusable) {
+        super(func, true, reusable);
+        this.reusable = reusable;
         this._buffer = [func];
     }
     async _commitBuffers() {
         let fn;
-        while ((fn = this._buffer.shift())) {
+        const buf = this.reusable ? _clone(this._buffer) : this._buffer;
+        while ((fn = buf.shift())) {
             this._value = await fn(this._value);
         }
     }
