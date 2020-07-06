@@ -3,10 +3,10 @@ export function patchGlobalThis(): typeof globalThis {
   /** no idea how to write this function in sane typescript */
   if (typeof globalThis === "object") return globalThis;
   Object.defineProperty(Object.prototype, "___this", {
-    get: function() {
+    get: function () {
       return this;
     },
-    configurable: true
+    configurable: true,
   });
   ___this.globalThis = (___this as any) as Window;
   const r: typeof globalThis = ___this as any;
@@ -32,7 +32,7 @@ export function _generateDocFrag(
   args: (Node | (string | number | boolean | symbol))[]
 ) {
   const frag = document.createDocumentFragment();
-  args.forEach(arg =>
+  args.forEach((arg) =>
     frag.appendChild(
       arg instanceof Node ? arg : document.createTextNode(String(arg))
     )
@@ -51,7 +51,3 @@ export const workerContext =
   typeof ((global as any) as { importScripts: (src: string) => any })
     .importScripts === "function";
 export const isBrowser = domContext || workerContext;
-type fnCb = (fn: () => {}) => any;
-export const defer = (typeof Promise == "function"
-  ? Promise.prototype.then.bind(Promise.resolve())
-  : setTimeout) as fnCb;

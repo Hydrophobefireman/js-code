@@ -6,7 +6,7 @@ export function patchGlobalThis() {
         get: function () {
             return this;
         },
-        configurable: true
+        configurable: true,
     });
     ___this.globalThis = ___this;
     const r = ___this;
@@ -23,7 +23,7 @@ export const _Object = emptyObj.constructor;
 export const hasOwnProp = emptyObj.hasOwnProperty;
 export function _generateDocFrag(args) {
     const frag = document.createDocumentFragment();
-    args.forEach(arg => frag.appendChild(arg instanceof Node ? arg : document.createTextNode(String(arg))));
+    args.forEach((arg) => frag.appendChild(arg instanceof Node ? arg : document.createTextNode(String(arg))));
     return frag;
 }
 export const domContext = typeof window !== "undefined" &&
@@ -34,6 +34,3 @@ export const workerContext = typeof self !== "undefined" &&
     typeof global
         .importScripts === "function";
 export const isBrowser = domContext || workerContext;
-export const defer = (typeof Promise == "function"
-    ? Promise.prototype.then.bind(Promise.resolve())
-    : setTimeout);

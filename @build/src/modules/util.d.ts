@@ -10,6 +10,3 @@ export declare function _generateDocFrag(args: (Node | (string | number | boolea
 export declare const domContext: boolean;
 export declare const workerContext: boolean;
 export declare const isBrowser: boolean;
-declare type fnCb = (fn: () => {}) => any;
-export declare const defer: fnCb;
-export {};
