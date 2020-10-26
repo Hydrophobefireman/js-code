@@ -1,12 +1,13 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "module": "commonjs",
+    "module": "esnext",
     "lib": ["dom", "esnext"],
-    "outDir": "@build",
+    "outDir": "@build-modern",
     "pretty": true,
     "rootDir": "",
     "strict": true,
+    "esModuleInterop": true,
     "declaration": true
   },
   "include": ["./src/**/*"]

@@ -1,16 +1,14 @@
 {
   "name": "@hydrophobefireman/j-utils",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "Javascript utility functions and shims",
   "main": "@build/src/index.js",
   "author": "Hydrophobefireman",
   "license": "ISC",
   "sideEffects": false,
-  "module": "./@build-modern/src/index.js",
+  "module": "./@build/src/index.js",
   "scripts": {
-    "build": "tsc && tsc --build tsconfig.modern.json",
-    "modern": "tsc --build tsconfig.modern.json",
-    "cjs": "tsc"
+    "build": "microbundle src/index.ts -o ./@build -f modern --target web --raw true  --tsconfig tsconfig.json"
   },
   "devDependencies": {
     "typescript": "^3.6.3"

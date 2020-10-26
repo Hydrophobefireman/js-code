@@ -1,7 +1,6 @@
 declare const _default: {
     <T = any>(entries: Iterable<readonly [string | number | symbol, T]>): {
-        [x: string]: T;
-        [x: number]: T;
+        [k: string]: T;
     };
     (entries: Iterable<readonly any[]>): any;
 };
