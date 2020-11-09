@@ -8,6 +8,6 @@ import { browserOnlyWarning } from "../warnings.js";
  */
 export default function base64ToArrayBuffer(b64: string): Promise<ArrayBuffer> {
   browserOnlyWarning._throw();
-  const data = fetch("data:," + b64);
+  const data = fetch("data:;base64," + b64);
   return data.then(x => x.arrayBuffer());
 }

@@ -5,7 +5,7 @@
     "lib": ["dom", "esnext"],
     "outDir": "@build-modern",
     "pretty": true,
-
+    "declaration": true,
     "strict": true
   },
   "include": ["./src/**/*"]
