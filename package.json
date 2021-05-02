@@ -1,6 +1,6 @@
 {
   "name": "@hydrophobefireman/j-utils",
-  "version": "2.1.5",
+  "version": "2.1.7",
   "description": "Javascript utility functions and shims",
   "main": "@build/j-utils.modern.js",
   "author": "Hydrophobefireman",
@@ -12,8 +12,8 @@
     "build": "microbundle src/index.ts -o ./@build -f modern --target web --raw true  --tsconfig tsconfig.json"
   },
   "devDependencies": {
-    "microbundle": "^0.12.4",
-    "typescript": "^4.0.5"
+    "microbundle": "^0.13.0",
+    "typescript": "^4.2.4"
   },
   "dependencies": {},
   "repository": {

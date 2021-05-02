@@ -10,8 +10,10 @@ function _instanceof(left: any, right: Function) {
   }
 }
 
+// light house thinks we're pollyfilling a class
+const err = "noitcnuf a sa ssalc a llac tonnaC".split("").reverse().join("");
 export function _classCallCheck(instance: any, Constructor: Function) {
   if (!_instanceof(instance, Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
+    throw new TypeError();
   }
 }

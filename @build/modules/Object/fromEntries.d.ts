@@ -1,5 +1,5 @@
 declare const _default: {
-    <T = any>(entries: Iterable<readonly [string | number | symbol, T]>): {
+    <T = any>(entries: Iterable<readonly [PropertyKey, T]>): {
         [k: string]: T;
     };
     (entries: Iterable<readonly any[]>): any;
