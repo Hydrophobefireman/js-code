@@ -1,6 +1,6 @@
 {
   "name": "@hydrophobefireman/j-utils",
-  "version": "2.1.8",
+  "version": "2.1.9",
   "description": "Javascript utility functions and shims",
   "main": "@build/j-utils.modern.js",
   "author": "Hydrophobefireman",
