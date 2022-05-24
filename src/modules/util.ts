@@ -1,4 +1,5 @@
-declare var ___this: { globalThis: Window };
+declare var ___this: typeof globalThis;
+
 export function patchGlobalThis(): typeof globalThis {
   /** no idea how to write this function in sane typescript */
   if (typeof globalThis === "object") return globalThis;
@@ -8,8 +9,9 @@ export function patchGlobalThis(): typeof globalThis {
     },
     configurable: true,
   });
-  ___this.globalThis = (___this as any) as Window;
-  const r: typeof globalThis = ___this as any;
+
+  (___this as any).globalThis = ___this;
+  const r: typeof globalThis = ___this;
   delete (Object.prototype as any).___this;
   return r;
 }
@@ -24,7 +26,8 @@ export const emptyArr = [];
 
 export const isIterable = (k: any) => k && !!k[_Sym.iterator];
 
-export const _Object: ObjectConstructor = emptyObj.constructor as ObjectConstructor;
+export const _Object: ObjectConstructor =
+  emptyObj.constructor as ObjectConstructor;
 
 export const hasOwnProp = emptyObj.hasOwnProperty;
 
@@ -48,6 +51,6 @@ export const domContext =
 export const workerContext =
   typeof self !== "undefined" &&
   !!self.postMessage &&
-  typeof ((global as any) as { importScripts: (src: string) => any })
+  typeof (global as any as {importScripts: (src: string) => any})
     .importScripts === "function";
 export const isBrowser = domContext || workerContext;

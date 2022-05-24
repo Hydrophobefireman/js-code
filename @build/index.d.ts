@@ -11,3 +11,4 @@ export { patchGlobalThis } from "./modules/util.js";
 export * from "./modules/Pipes/index.js";
 export { cache } from "./modules/cache/index.js";
 export { debounce } from "./modules/debounce/index.js";
+export * from "./modules/blobToArrayBuffer/index.js";
